@@ -1,6 +1,7 @@
 package com.upgrad.doctorservice.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,11 @@ public class ApplicationSecurityConfig  {
                 .csrf().disable();
         http
                 .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers(HttpMethod.POST, "/doctors").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/doctors/{doctorId}/document").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/doctors/{doctorId}/approve").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/doctors/{doctorId}/reject").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/doctors**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().permitAll()
                 )
                 .httpBasic();
@@ -31,7 +37,13 @@ public class ApplicationSecurityConfig  {
         UserDetails user = User.withDefaultPasswordEncoder()
                 .username("user")
                 .password("password")
+                .roles("USER")
                 .build();
-        return new InMemoryUserDetailsManager(user);
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("Password@123")
+                .roles("ADMIN")
+                .build();
+        return new InMemoryUserDetailsManager(user, admin);
     }
 }

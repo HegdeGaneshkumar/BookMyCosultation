@@ -1,8 +1,19 @@
 package com.upgrad.doctorservice.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDate;
 
+@Document(collection = "doctor")
 public class DoctorInfoEntity {
+
+    @Id
+    String id;
+
+    @Transient
+    public static final String SEQUENCE_NAME = "doctors_sequence";
     String firstName;
     String lastName;
     String speciality;
@@ -16,6 +27,14 @@ public class DoctorInfoEntity {
     LocalDate registrationDate;
     LocalDate verificationDate;
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -115,8 +134,9 @@ public class DoctorInfoEntity {
 
     @Override
     public String toString() {
-        return "Doctor{" +
-                "firstName='" + firstName + '\'' +
+        return "DoctorInfoEntity{" +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", speciality='" + speciality + '\'' +
                 ", dob=" + dob +

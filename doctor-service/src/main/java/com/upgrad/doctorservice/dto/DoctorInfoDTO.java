@@ -5,33 +5,53 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 public class DoctorInfoDTO {
-    @NotBlank
-    @Size(max = 20)
+    @NotBlank(message = "firstName cannot be blank")
+    @Size(max = 20, message = "firstName cannot be more than 20 chars")
     String firstName;
-    @NotBlank
-    @Size(max = 20)
+    @NotBlank(message = "lastName cannot be blank")
+    @Size(max = 20, message = "lastName cannot be more than 20 chars")
     String lastName;
-    @NotBlank
+    @NotNull(message = "dob cannot be blank")
     LocalDate dob;
     @Size(max = 10)
-    @NotBlank
-    @Pattern(regexp = "^[0-9]{10}")
+    @NotBlank(message = "mobile cannot be blank")
+    @Pattern(regexp = "^[0-9]{10}", message = "mobile number not valid")
     String mobile;
-    @NotBlank
-    @Email
+    @NotBlank(message = "emailId cannot be blank")
+    @Email(message = "not a valid email id")
     String emailId;
-    @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9_]{10}")
+    @NotBlank(message = "pan cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z0-9_]{10}", message = "pan pattern is not accepted")
     String pan;
 
-    String specialization;
+    String speciality;
 
-    public String getSpecialization() {
-        return specialization;
+    String status;
+
+    LocalDate registrationDate;
+
+    public String getStatus() {
+        return status;
     }
 
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDate getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDate registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
+    public String getSpeciality() {
+        return speciality;
+    }
+
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
     }
 
 

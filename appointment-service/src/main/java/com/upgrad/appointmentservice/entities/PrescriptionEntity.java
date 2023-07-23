@@ -7,12 +7,6 @@ import java.util.List;
 
 @Document(collection = "prescription")
 public class PrescriptionEntity {
-    class MedicineEntity {
-        String name;
-        String dosage;
-        String frequency;
-        String remarks;
-    }
     @Id
     String id;
     String userId;

@@ -10,4 +10,6 @@ import java.util.List;
 public interface AppointmentDao extends JpaRepository<AppointmentEntity, String> {
 
     public List<AppointmentEntity> findAppointmentsByUserId(String userId);
+
+    public AppointmentEntity findAppointmentByAppointmentId(String appointmentId);
 }

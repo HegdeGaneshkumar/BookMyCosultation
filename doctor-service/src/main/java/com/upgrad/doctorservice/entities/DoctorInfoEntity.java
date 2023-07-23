@@ -11,9 +11,6 @@ public class DoctorInfoEntity {
 
     @Id
     String id;
-
-    @Transient
-    public static final String SEQUENCE_NAME = "doctors_sequence";
     String firstName;
     String lastName;
     String speciality;

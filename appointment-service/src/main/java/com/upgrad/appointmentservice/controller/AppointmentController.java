@@ -1,9 +1,11 @@
 package com.upgrad.appointmentservice.controller;
 
 import com.upgrad.appointmentservice.dto.AvailabilityDto;
+import com.upgrad.appointmentservice.dto.PrescriptionDto;
 import com.upgrad.appointmentservice.entities.AppointmentEntity;
 import com.upgrad.appointmentservice.entities.PrescriptionEntity;
 import com.upgrad.appointmentservice.service.AppointmentService;
+import com.upgrad.appointmentservice.util.POJOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,8 +58,9 @@ public class AppointmentController {
     }
 
     @PostMapping(value = "/prescriptions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PrescriptionEntity> createPrescription(@RequestBody PrescriptionEntity prescriptionEntity){
-        PrescriptionEntity savedPrescription = appointmentService.savePrescriptionDetails(prescriptionEntity);
+    public ResponseEntity<PrescriptionEntity> createPrescription(@RequestBody PrescriptionDto prescriptionDto){
+
+        PrescriptionEntity savedPrescription = appointmentService.savePrescriptionDetails(POJOConverter.convertPrescriptionDtoToEntity(prescriptionDto));
         return new ResponseEntity<>(savedPrescription, HttpStatus.OK);
     }
 }

@@ -7,6 +7,8 @@ import com.upgrad.appointmentservice.dto.AvailabilityDto;
 import com.upgrad.appointmentservice.entities.AppointmentEntity;
 import com.upgrad.appointmentservice.entities.AvailabilityEntity;
 import com.upgrad.appointmentservice.entities.PrescriptionEntity;
+import com.upgrad.appointmentservice.exception.PaymentPendingException;
+import com.upgrad.appointmentservice.exception.RequestedResourceUnavailable;
 import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonComponent;
@@ -101,7 +103,17 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Override
     public PrescriptionEntity savePrescriptionDetails(PrescriptionEntity prescriptionEntity) {
-        PrescriptionEntity savedPrescription = _prescriptionRepo.save(prescriptionEntity);
-        return savedPrescription;
+        AppointmentEntity appointmentEntity;
+        try {
+            appointmentEntity = _appointmentDao.findAppointmentByAppointmentId(prescriptionEntity.getAppointmentId());
+        }catch (RuntimeException e){
+            throw new RequestedResourceUnavailable();
+        }
+        if (appointmentEntity.getStatus().equals("Confirmed")) {
+            PrescriptionEntity savedPrescription = _prescriptionRepo.save(prescriptionEntity);
+            return savedPrescription;
+        } else {
+            throw new PaymentPendingException();
+        }
     }
 }

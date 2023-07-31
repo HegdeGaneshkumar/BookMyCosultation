@@ -9,11 +9,13 @@ import com.upgrad.appointmentservice.entities.AvailabilityEntity;
 import com.upgrad.appointmentservice.entities.PrescriptionEntity;
 import com.upgrad.appointmentservice.exception.PaymentPendingException;
 import com.upgrad.appointmentservice.exception.RequestedResourceUnavailable;
+import com.upgrad.appointmentservice.producer.KafkaMessageProducer;
 import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +32,12 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Autowired
     private AppointmentDao _appointmentDao;
+
+    private static final String TOPIC_NAME = "appointment-service";
+
+    @Autowired
+    private KafkaMessageProducer kafkaMessageProducer ;
+
 
     @Autowired
     private PrescriptionRepository _prescriptionRepo;
@@ -86,6 +94,12 @@ public class AppointmentServiceImpl implements AppointmentService{
         appointmentEntity.setStatus("PendingPayment");
         appointmentEntity.setCreatedDate(LocalDateTime.now());
         AppointmentEntity savedAppointmentEntity = _appointmentDao.save(appointmentEntity);
+        try {
+            kafkaMessageProducer.publish(TOPIC_NAME, savedAppointmentEntity.getUserEmailId(), "Your appointment has been confirmed with Appontment ID:" + savedAppointmentEntity.getAppointmentId());
+        }
+        catch (IOException exception){
+            System.out.println(exception);
+        }
         return savedAppointmentEntity.getAppointmentId();
     }
 
@@ -111,6 +125,12 @@ public class AppointmentServiceImpl implements AppointmentService{
         }
         if (appointmentEntity.getStatus().equals("Confirmed")) {
             PrescriptionEntity savedPrescription = _prescriptionRepo.save(prescriptionEntity);
+            try {
+                kafkaMessageProducer.publish(TOPIC_NAME, appointmentEntity.getUserEmailId(), savedPrescription.toString());
+            }
+            catch (IOException exception){
+                System.out.println(exception);
+            }
             return savedPrescription;
         } else {
             throw new PaymentPendingException();

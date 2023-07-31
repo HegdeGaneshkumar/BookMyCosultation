@@ -3,9 +3,10 @@ package com.upgrad.doctorservice.controller;
 import com.upgrad.doctorservice.dto.DoctorInfoDTO;
 import com.upgrad.doctorservice.entities.DoctorInfoEntity;
 import com.upgrad.doctorservice.service.DoctorService;
+import com.upgrad.doctorservice.service.S3Repository;
 import com.upgrad.doctorservice.util.POJOConverter;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,14 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @RestController
 public class DoctorController {
-
     private DoctorService doctorService;
+
+    @Autowired
+    private S3Repository s3Repository;
     @Autowired
     public DoctorController(DoctorService doctorService){
         this.doctorService = doctorService;
@@ -38,10 +41,16 @@ public class DoctorController {
     }
 
     @PostMapping(value = "/doctors/{doctorId}/document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity uploadDocuments(@PathVariable String doctorId, @RequestParam(value = "file", required = true) MultipartFile file){
+    public ResponseEntity uploadDocuments(@PathVariable String doctorId, @RequestParam(value = "files", required = true) List<MultipartFile> files){
 
         //call service layer and upload the documents to s3
-        return new ResponseEntity(HttpStatus.OK);
+        try {
+            for(MultipartFile file: files)
+                s3Repository.uploadFiles(doctorId, file);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return new ResponseEntity("File(s) uploaded Successfully",HttpStatus.OK);
     }
 
     @PutMapping(value = "/doctors/{doctorId}/approve")
@@ -74,8 +83,8 @@ public class DoctorController {
 
     @GetMapping(value = "/doctors/{doctorId}/documents/metadata")
     public ResponseEntity<DoctorInfoEntity> getUploadedDocs(@PathVariable String doctorId){
-
-        return new ResponseEntity(HttpStatus.OK);
+        String uploadedFiles = s3Repository.getUploadedDocuments(doctorId);
+        return new ResponseEntity(uploadedFiles, HttpStatus.OK);
     }
 
     @GetMapping(value = "/doctors/{doctorId}/documents/{documentName}")

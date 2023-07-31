@@ -7,8 +7,9 @@ Payment service
 notification service
 Rating service
 
-Still need to add few other services:
+Still need to add few other tasks:
 API Gateway
+Deployment
 
 
 

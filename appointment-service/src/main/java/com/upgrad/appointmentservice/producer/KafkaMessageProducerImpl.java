@@ -1,4 +1,4 @@
-package com.upgrad.doctorservice.producer;
+package com.upgrad.appointmentservice.producer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;

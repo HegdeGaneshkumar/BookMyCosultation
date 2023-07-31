@@ -16,6 +16,8 @@ public class RatingController {
     @Autowired
     RatingRepository ratingRepository;
 
+    //@Todo: A message is sent to a Kafka topic to which the doctor service is listening.
+    // @TODO: The doctor service then updates the average rating of the doctor.
     @PostMapping(value = "/ratings", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity saveRating(@RequestBody RatingEntity ratingEntity){
         ratingRepository.save(ratingEntity);

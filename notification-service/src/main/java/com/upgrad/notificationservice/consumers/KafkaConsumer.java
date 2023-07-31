@@ -1,18 +1,28 @@
 package com.upgrad.notificationservice.consumers;
 
+import com.upgrad.notificationservice.email.EmailService;
+import com.upgrad.notificationservice.email.EmailServiceImpl;
+import com.upgrad.notificationservice.model.MailEntity;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.Set;
 
+@RequiredArgsConstructor
+@Component
 public class KafkaConsumer {
+    private static EmailServiceImpl emailService = new EmailServiceImpl(new FreeMarkerConfigurer());
 
-    public static void main(String[] args) {
+    public static void main(String args[]) {
         Properties properties = new Properties();
-        properties.setProperty("bootstrap.servers", "ec2-52-73-240-46.compute-1.amazonaws.com:9092");
+        properties.setProperty("bootstrap.servers", "ec2-35-173-141-5.compute-1.amazonaws.com:9092");
         properties.setProperty("group.id", "doctor-service");
         properties.setProperty("enable.auto.commit", "true");
         properties.setProperty("auto.commit.interval.ms", "1000");
@@ -20,7 +30,7 @@ public class KafkaConsumer {
         properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
         org.apache.kafka.clients.consumer.KafkaConsumer<String, String> consumer = new org.apache.kafka.clients.consumer.KafkaConsumer<String, String>(properties);
-        consumer.subscribe(Arrays.asList("doctor-service"));
+        consumer.subscribe(Arrays.asList("doctor-service", "appointment-service", "user-service"));
 
         Set<String> subsribedTopics = consumer.subscription();
 
@@ -31,6 +41,21 @@ public class KafkaConsumer {
                 ConsumerRecords<String, String > records = consumer.poll(Duration.ofMillis(100));
                 for(ConsumerRecord<String, String> record: records){
                     System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+                    System.out.println("Sending an email to "+ record.key());
+                    MailEntity mailEntity = new MailEntity();
+                    mailEntity.setEmailId(record.key());
+                    mailEntity.setSubject("Mail from BMC");
+                    mailEntity.setMessage(record.value());
+                    emailService.initVerify();
+                    emailService.verifyEmail(mailEntity.getEmailId());
+                    try {
+                        emailService.init();
+                        emailService.sendEmail(mailEntity);
+                        System.out.println("Email sent successfully");
+                    }
+                    catch (Exception e){
+                        System.out.println(e);
+                    }
                 }
             }
         }

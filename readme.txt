@@ -8,9 +8,9 @@ notification service
 Rating service
 
 Still need to add few other tasks:
-API Gateway
 Deployment
-
+User service - s3 implementation
+update doctor ratings 
 
 
 Things to take care when starting fresh:

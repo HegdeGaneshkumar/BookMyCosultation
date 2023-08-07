@@ -1,0 +1,90 @@
+version: '3.3'
+
+services:
+# Doctor Service
+  doctorservice:
+    build: doctor-service
+    container_name: doctor-svc
+    image: bookmycosultation/doctor-svc:1.0.0
+    ports:
+    - "8080:8080" 
+    networks:
+      - bmcnet
+    depends_on:
+      - eurekaserver 
+# User Service
+  userservice:
+    build: user-service
+    container_name: user-svc
+    image: bookmycosultation/user-svc:1.0.0
+    ports:
+    - "8081:8081" 
+    networks:
+      - bmcnet
+    depends_on:
+      - eurekaserver 
+# Appointment Service
+  appointmentservice:
+    build: appointment-service
+    container_name: appointment-svc
+    image: bookmycosultation/appointment-svc:1.0.0
+    ports:
+    - "8082:8082" 
+    networks:
+      - bmcnet
+    depends_on:
+      - eurekaserver 
+# Payment Service
+  paymentservice:
+    build: payment-service
+    container_name: payment-svc
+    image: bookmycosultation/payment-svc:1.0.0
+    ports:
+    - "8083:8083" 
+    networks:
+      - bmcnet
+    depends_on:
+      - eurekaserver 
+# Rating Service
+  ratingservice:
+    build: rating-service
+    container_name: rating-svc
+    image: bookmycosultation/rating-svc:1.0.0
+    ports:
+    - "8084:8084" 
+    networks:
+      - bmcnet
+    depends_on:
+      - eurekaserver 
+# BMC Gateway
+  bmcgateway:
+    build: bmc-gateway
+    container_name: bmcgateway
+    image: bookmycosultation/bmcgateway:1.0.0
+    ports:
+    - "9191:9191" 
+    networks:
+      - bmcnet  
+    depends_on:
+      - eurekaserver 
+# Notification Service
+  notificationsvc:
+    build: notification-service
+    container_name: notificationsvc
+    image: bookmycosultation/notificationsvc:1.0.0
+    ports:
+    - "8085:8085" 
+    networks:
+      - bmcnet
+# Eureka Server
+  eurekaserver:
+    build: eureka-server
+    container_name: eurekaserver
+    image: bookmycosultation/eurekaserver:1.0.0
+    ports:
+    - "8761:8761"
+    networks:
+      - bmcnet
+networks:
+  bmcnet:
+    driver: bridge

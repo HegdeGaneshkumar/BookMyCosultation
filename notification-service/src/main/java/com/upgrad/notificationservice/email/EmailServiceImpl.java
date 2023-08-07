@@ -12,8 +12,6 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -29,7 +27,6 @@ import java.util.Properties;
 public class EmailServiceImpl implements EmailService{
 
     private SesClient sesClient;
-    private final FreeMarkerConfigurer configurer;
     private String fromEmail = "";
     private String accessKey;
     private String secretKey;
@@ -61,8 +58,6 @@ public class EmailServiceImpl implements EmailService{
     public void sendEmail(MailEntity mailEntity) throws IOException, TemplateException, MessagingException {
         Map<String,Object> templateModel = new HashMap<>();
         templateModel.put("MailEntity",mailEntity);
-        //Template freeMarkerTemplate = configurer.getConfiguration().getTemplate("useremail.ftl");
-        //String htmlBody = FreeMarkerTemplateUtils.processTemplateIntoString(freeMarkerTemplate,templateModel);
         sendSimpleMessage(mailEntity);
     }
 

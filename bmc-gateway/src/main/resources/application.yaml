@@ -39,7 +39,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://54.146.132.57:8761/eureka/
+      defaultZone: http://${BMC_HOST_IP}:8761/eureka/
     instance:
       preferIpAddress: true
 

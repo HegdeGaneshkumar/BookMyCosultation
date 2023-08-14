@@ -14,7 +14,7 @@ public class KafkaMessageProducerImpl implements KafkaMessageProducer{
     @Override
     public void publish(String topic, String key, String value) throws IOException {
         Properties properties = new Properties();
-        properties.put("bootstrap.servers", "ec2-35-173-141-5.compute-1.amazonaws.com:9092");
+        properties.put("bootstrap.servers", System.getenv("BMC_KAFKA_HOST_DNS")+":9092");
         properties.put("acks", "all");
         properties.put("retries", 0);
         properties.put("linger.ms", 0);

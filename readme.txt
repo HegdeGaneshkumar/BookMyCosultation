@@ -1,18 +1,15 @@
-Microservices:
-
-Doctor onboarding service
-Appointment Service
-User OnBoarding service
-Payment service
-notification service
-Rating service
-
-Still need to add few other tasks:
-Deployment
-User service - s3 implementation
-update doctor ratings 
+Instructions to run the application:
+Prerequisites:
+•	Docker is installed and is running.
+•	AWS account, Access key and secret key for AWS account
+•	An AWS RDS instance
+•	An EC2 instance running MongoDB
+•	An EC2 instance running Kafka server
 
 
-Things to take care when starting fresh:
-1. Start Mongo Instance, update inbound rules, pick new IP, sudo service mongod start, 
-2. In application.properties file, change the mongo instance URL
+Steps:
+•	Navigate to BookMyConsultation directory.
+•	Modify the config.env file with appropriate values. 
+•	Run the following command:
+	sudo docker compose up -d
+•	BMC application is ready to take API requests!

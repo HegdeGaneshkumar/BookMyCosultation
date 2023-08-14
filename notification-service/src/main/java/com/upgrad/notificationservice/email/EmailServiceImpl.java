@@ -32,8 +32,8 @@ public class EmailServiceImpl implements EmailService{
     private String secretKey;
 
     public void initVerify(){
-        accessKey="***REMOVED***";
-        secretKey="***REMOVED***";
+        accessKey=System.getenv("BMC_AWS_ACCESS_KEY");
+        secretKey=System.getenv("BMC_AWS_SECRET_KEY");
         StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider
                 .create(AwsBasicCredentials.create(accessKey,secretKey));
         sesClient = SesClient.builder()
@@ -44,8 +44,8 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     public void init() {
-        accessKey="***REMOVED***";
-        secretKey="***REMOVED***";//
+        accessKey=System.getenv("BMC_SMTP_ACCESS_KEY");
+        secretKey=System.getenv("BMC_SMTP_SECRET_KEY");
         StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider
                 .create(AwsBasicCredentials.create(accessKey,secretKey));
         sesClient = SesClient.builder()

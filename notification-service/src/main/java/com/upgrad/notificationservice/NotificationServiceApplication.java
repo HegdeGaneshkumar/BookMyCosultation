@@ -24,7 +24,7 @@ public class NotificationServiceApplication {
 		SpringApplication.run(NotificationServiceApplication.class, args);
 
 		Properties properties = new Properties();
-		properties.setProperty("bootstrap.servers", "ec2-35-173-141-5.compute-1.amazonaws.com:9092");
+		properties.setProperty("bootstrap.servers", System.getenv("BMC_KAFKA_HOST_DNS")+":9092");
 		properties.setProperty("group.id", "doctor-service");
 		properties.setProperty("enable.auto.commit", "true");
 		properties.setProperty("auto.commit.interval.ms", "1000");

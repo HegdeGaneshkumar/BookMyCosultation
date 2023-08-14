@@ -11,7 +11,9 @@ services:
     networks:
       - bmcnet
     depends_on:
-      - eurekaserver 
+      - eurekaserver
+    env_file:
+    - config.env
 # User Service
   userservice:
     build: user-service
@@ -22,7 +24,9 @@ services:
     networks:
       - bmcnet
     depends_on:
-      - eurekaserver 
+      - eurekaserver
+    env_file:
+    - config.env
 # Appointment Service
   appointmentservice:
     build: appointment-service
@@ -33,7 +37,9 @@ services:
     networks:
       - bmcnet
     depends_on:
-      - eurekaserver 
+      - eurekaserver
+    env_file:
+    - config.env
 # Payment Service
   paymentservice:
     build: payment-service
@@ -44,7 +50,9 @@ services:
     networks:
       - bmcnet
     depends_on:
-      - eurekaserver 
+      - eurekaserver
+    env_file:
+    - config.env
 # Rating Service
   ratingservice:
     build: rating-service
@@ -55,7 +63,9 @@ services:
     networks:
       - bmcnet
     depends_on:
-      - eurekaserver 
+      - eurekaserver
+    env_file:
+    - config.env
 # BMC Gateway
   bmcgateway:
     build: bmc-gateway
@@ -66,7 +76,9 @@ services:
     networks:
       - bmcnet  
     depends_on:
-      - eurekaserver 
+      - eurekaserver
+    env_file:
+    - config.env
 # Notification Service
   notificationsvc:
     build: notification-service
@@ -76,8 +88,12 @@ services:
     - "8085:8085" 
     networks:
       - bmcnet
+    env_file:
+    - config.env
 # Eureka Server
   eurekaserver:
+    env_file:
+      - config.env
     build: eureka-server
     container_name: eurekaserver
     image: bookmycosultation/eurekaserver:1.0.0

@@ -32,8 +32,8 @@ public class EmailServiceImpl implements EmailService{
     private String secretKey;
 
     public void initVerify(){
-        accessKey="AKIA4JO4AH56CD76Y2XC";
-        secretKey="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";
+        accessKey=System.getenv("BMC_AWS_ACCESS_KEY");
+        secretKey=System.getenv("BMC_AWS_SECRET_KEY");
         StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider
                 .create(AwsBasicCredentials.create(accessKey,secretKey));
         sesClient = SesClient.builder()
@@ -44,8 +44,8 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     public void init() {
-        accessKey="AKIA4JO4AH56G2V6OAO3";
-        secretKey="BKFRw7/txnXmAkxSGRfnpWn5YmcDAv7AF6LT0CyfpDup";//
+        accessKey=System.getenv("BMC_SMTP_ACCESS_KEY");
+        secretKey=System.getenv("BMC_SMTP_SECRET_KEY");
         StaticCredentialsProvider staticCredentialsProvider = StaticCredentialsProvider
                 .create(AwsBasicCredentials.create(accessKey,secretKey));
         sesClient = SesClient.builder()

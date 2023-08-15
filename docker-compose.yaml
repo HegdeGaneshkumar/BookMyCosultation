@@ -101,6 +101,17 @@ services:
     - "8761:8761"
     networks:
       - bmcnet
+# JWT Generator
+  jwtgenerator:
+    env_file:
+      - config.env
+    build: JWTGenerator
+    container_name: jwtgenerator
+    image: bookmycosultation/jwtgenerator:1.0.0
+    ports:
+    - "8086:8086"
+    networks:
+      - bmcnet
 networks:
   bmcnet:
     driver: bridge

@@ -1,9 +1,13 @@
 package com.upgrad.appointmentservice.security;
 
+import org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -17,31 +21,19 @@ public class AppointmentSecurityConfig {
             http
                     .csrf().disable();
             http
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .addFilter(new JWTAuthenticationFilter(http.getSharedObject(AuthenticationManager.class)))
+                    .addFilterAfter(new JWTTokenVerifier(), JWTAuthenticationFilter.class)
                     .authorizeHttpRequests((authz) -> authz
-                            .requestMatchers(HttpMethod.GET, "/users**").hasAnyRole("ADMIN", "USER")
-                            .requestMatchers(HttpMethod.GET, "/doctor**").hasAnyRole("ADMIN", "USER")
-                            .requestMatchers(HttpMethod.POST,"/doctor**").hasAnyRole("ADMIN", "USER")
-                            .requestMatchers(HttpMethod.GET, "/appointments**").hasAnyRole("ADMIN", "USER")
-                            .requestMatchers(HttpMethod.POST,"/appointments**").hasAnyRole("ADMIN", "USER")
-                            .requestMatchers(HttpMethod.POST,"/prescriptions**").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/users**").hasAnyAuthority("ADMIN", "USER")
+                            .requestMatchers(HttpMethod.GET, "/doctor**").hasAnyAuthority("ADMIN", "USER")
+                            .requestMatchers(HttpMethod.POST,"/doctor**").hasAnyAuthority("ADMIN", "USER")
+                            .requestMatchers(HttpMethod.GET, "/appointments**").hasAnyAuthority("ADMIN", "USER")
+                            .requestMatchers(HttpMethod.POST,"/appointments**").hasAnyAuthority("ADMIN", "USER")
+                            .requestMatchers(HttpMethod.POST,"/prescriptions**").hasAnyAuthority("USER")
                             .anyRequest().permitAll()
-                    )
-                    .httpBasic();
+                    );
             return http.build();
-        }
-
-        @Bean
-        public InMemoryUserDetailsManager userDetailsService() {
-            UserDetails user = User.withDefaultPasswordEncoder()
-                    .username("user")
-                    .password("password")
-                    .roles("USER")
-                    .build();
-            UserDetails admin = User.withDefaultPasswordEncoder()
-                    .username("admin")
-                    .password("Password@123")
-                    .roles("ADMIN")
-                    .build();
-            return new InMemoryUserDetailsManager(user, admin);
         }
 }

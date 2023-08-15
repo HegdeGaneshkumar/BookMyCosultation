@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class AppointmentController {
     }
 
     @PostMapping(value = "/doctor/{doctorId}/availability", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<AvailabilityDto> updateDoctorAvailability(@RequestBody Map<String, Map<String, List<String>>> availabilityMap, @PathVariable String doctorId){
 
         appointmentService.saveDoctorAvailability(availabilityMap.get("availabilityMap"), doctorId);
@@ -33,6 +35,7 @@ public class AppointmentController {
     }
 
     @GetMapping(value = "/doctor/{doctorId}/availability", produces = MediaType.APPLICATION_JSON_VALUE )
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<AvailabilityDto> getDoctorAvailability(@PathVariable String doctorId){
 
         AvailabilityDto availabilityDto = appointmentService.getDoctorAvailabilityById(doctorId);
@@ -40,24 +43,28 @@ public class AppointmentController {
     }
 
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity createAppointment(@RequestBody AppointmentEntity appointmentEntity){
         String appointmentId = appointmentService.saveAppointment(appointmentEntity);
         return new ResponseEntity(appointmentId, HttpStatus.OK);
     }
 
     @GetMapping(value = "/appointments/{appointmentId}", produces = MediaType.APPLICATION_JSON_VALUE )
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<AppointmentEntity> getAppointmentDetails(@PathVariable String appointmentId){
         AppointmentEntity appointmentEntity = appointmentService.getAppointmentById(appointmentId);
         return new ResponseEntity<>(appointmentEntity, HttpStatus.OK);
     }
 
     @GetMapping(value = "/users/{userId}/appointments", produces = MediaType.APPLICATION_JSON_VALUE )
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity getAllAppointmentsOfUser(@PathVariable String userId){
         List<AppointmentEntity> appointmentEntities = appointmentService.getAppointmentsByUserId(userId);
         return new ResponseEntity(appointmentEntities, HttpStatus.OK);
     }
 
     @PostMapping(value = "/prescriptions", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<PrescriptionEntity> createPrescription(@RequestBody PrescriptionDto prescriptionDto){
 
         PrescriptionEntity savedPrescription = appointmentService.savePrescriptionDetails(POJOConverter.convertPrescriptionDtoToEntity(prescriptionDto));

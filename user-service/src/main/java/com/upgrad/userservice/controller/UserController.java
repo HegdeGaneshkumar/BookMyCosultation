@@ -1,6 +1,7 @@
 package com.upgrad.userservice.controller;
 
 import com.upgrad.userservice.entities.UserInfoEntity;
+import com.upgrad.userservice.service.S3Repository;
 import com.upgrad.userservice.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 public class UserController {
 
     private UserService userService;
+
+    @Autowired
+    private S3Repository s3Repository;
     @Autowired
     public UserController(UserService userService){
         this.userService = userService;
@@ -33,10 +39,16 @@ public class UserController {
     }
 
     @PostMapping(value = "users/{id}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity uploadDocuments(@PathVariable String id, @RequestParam(value = "file", required = true) MultipartFile file){
+    public ResponseEntity uploadDocuments(@PathVariable String id, @RequestParam(value = "file", required = true) List<MultipartFile> files){
 
-        System.out.println("inside uploadDocuments controller");
-        return new ResponseEntity<>(HttpStatus.OK);
+        //call service layer and upload the documents to s3
+        try {
+            for(MultipartFile file: files)
+                s3Repository.uploadFiles(id, file);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return new ResponseEntity<>("File(s) uploaded successfully", HttpStatus.OK);
     }
 
     @GetMapping(value = "users/{id}/documents/{documentName}")

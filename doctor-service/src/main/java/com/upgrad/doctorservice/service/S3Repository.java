@@ -26,8 +26,8 @@ public class S3Repository {
     @Autowired
     public S3Repository( ){
         //this.metadata = metadata;
-        String accessKey = "***REMOVED***";
-        String secretKey = "***REMOVED***";
+        String accessKey = "Paste_your_access_key";
+        String secretKey = "SecretKey";
         AWSCredentials credentials = new BasicAWSCredentials(accessKey,secretKey);
         s3Client = AmazonS3ClientBuilder
                 .standard()
